@@ -25,6 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeLoginModal = document.querySelector(".close-login-modal");
   const loginMessage = document.getElementById("login-message");
   const themeToggleButton = document.getElementById("theme-toggle-button");
+  const themeIcon = themeToggleButton.querySelector(".theme-icon");
+  const themeLabel = themeToggleButton.querySelector(".theme-label");
 
   // Activity categories with corresponding colors
   const activityTypes = {
@@ -48,12 +50,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateThemeToggleButton(theme) {
     if (theme === "dark") {
-      themeToggleButton.innerHTML =
-        '<span class="theme-icon">☀️</span><span class="theme-label">Light Mode</span>';
+      themeIcon.textContent = "☀️";
+      themeLabel.textContent = "Light Mode";
       themeToggleButton.setAttribute("aria-label", "Switch to light mode");
     } else {
-      themeToggleButton.innerHTML =
-        '<span class="theme-icon">🌙</span><span class="theme-label">Dark Mode</span>';
+      themeIcon.textContent = "🌙";
+      themeLabel.textContent = "Dark Mode";
       themeToggleButton.setAttribute("aria-label", "Switch to dark mode");
     }
   }
