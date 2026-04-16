@@ -637,7 +637,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const activityUrlObject = new URL(window.location.href);
     activityUrlObject.searchParams.set("activity", name);
     const activityUrl = activityUrlObject.toString();
-    const shareText = `Check out ${name} at Mergington High School Activities! ${details.description} Schedule: ${formattedSchedule}.`;
+    const sanitizeShareText = (value) => String(value).replace(/\s+/g, " ").trim();
+    const safeName = sanitizeShareText(name);
+    const safeDescription = sanitizeShareText(details.description);
+    const safeSchedule = sanitizeShareText(formattedSchedule);
+    const shareText = `Check out ${safeName} at Mergington High School Activities! ${safeDescription} Schedule: ${safeSchedule}.`;
 
     return {
       text: shareText,
@@ -646,13 +650,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function createSocialShareButtons(shareData) {
-    const encodedText = encodeURIComponent(shareData.text);
+    const xMessage = `${shareData.text} ${shareData.url}`.slice(0, 260);
+    const encodedXMessage = encodeURIComponent(xMessage);
     const encodedUrl = encodeURIComponent(shareData.url);
-    const xShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+    const xShareUrl = `https://twitter.com/intent/tweet?text=${encodedXMessage}`;
+    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+    const whatsappShareUrl = `https://wa.me/?text=${encodeURIComponent(
       `${shareData.text} ${shareData.url}`
     )}`;
-    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
-    const whatsappShareUrl = `https://wa.me/?text=${encodedText}%20${encodedUrl}`;
 
     return `
       <div class="activity-social-share">
