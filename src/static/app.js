@@ -498,6 +498,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
+    const shareData = buildShareData(name, details, formattedSchedule);
+    const socialShareButtons = createSocialShareButtons(shareData);
 
     // Create activity tag
     const tagHtml = `
@@ -527,6 +529,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <strong>Schedule:</strong> ${formattedSchedule}
         <span class="tooltip-text">Regular meetings at this time throughout the semester</span>
       </p>
+      ${socialShareButtons}
       ${capacityIndicator}
       <div class="participants-list">
         <h5>Current Participants:</h5>
@@ -588,6 +591,57 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     activitiesList.appendChild(activityCard);
+  }
+
+  function buildShareData(name, details, formattedSchedule) {
+    const activityUrl = `${window.location.origin}${
+      window.location.pathname
+    }?activity=${encodeURIComponent(name)}`;
+    const shareText = `Check out ${name} at Mergington High School Activities! ${details.description} Schedule: ${formattedSchedule}.`;
+
+    return {
+      text: shareText,
+      url: activityUrl,
+    };
+  }
+
+  function createSocialShareButtons(shareData) {
+    const encodedText = encodeURIComponent(shareData.text);
+    const encodedUrl = encodeURIComponent(shareData.url);
+    const xShareUrl = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+    const whatsappShareUrl = `https://wa.me/?text=${encodeURIComponent(
+      `${shareData.text} ${shareData.url}`
+    )}`;
+
+    return `
+      <div class="activity-social-share">
+        <span class="social-share-label">Share:</span>
+        <div class="social-share-buttons">
+          <a
+            class="social-share-button share-x"
+            href="${xShareUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Share on X"
+          >X</a>
+          <a
+            class="social-share-button share-facebook"
+            href="${facebookShareUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Share on Facebook"
+          >f</a>
+          <a
+            class="social-share-button share-whatsapp"
+            href="${whatsappShareUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Share on WhatsApp"
+          >💬</a>
+        </div>
+      </div>
+    `;
   }
 
   // Event listeners for search and filter
