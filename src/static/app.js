@@ -648,7 +648,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function createSocialShareButtons(shareData) {
     const encodedText = encodeURIComponent(shareData.text);
     const encodedUrl = encodeURIComponent(shareData.url);
-    const xShareUrl = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+    const xShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      `${shareData.text} ${shareData.url}`
+    )}`;
     const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
     const whatsappShareUrl = `https://wa.me/?text=${encodedText}%20${encodedUrl}`;
 
@@ -661,7 +663,7 @@ document.addEventListener("DOMContentLoaded", () => {
             class="social-share-button share-native"
             aria-label="Share activity"
             title="Share activity"
-          >S</button>
+          >⤴</button>
           <a
             class="social-share-button share-x"
             href="${xShareUrl}"
@@ -675,7 +677,7 @@ document.addEventListener("DOMContentLoaded", () => {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Share on Facebook"
-          >f</a>
+          >F</a>
           <a
             class="social-share-button share-whatsapp"
             href="${whatsappShareUrl}"
