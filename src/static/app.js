@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeLoginModal = document.querySelector(".close-login-modal");
   const loginMessage = document.getElementById("login-message");
   const themeToggleButton = document.getElementById("theme-toggle-button");
-  const themeIcon = themeToggleButton.querySelector(".theme-icon");
-  const themeLabel = themeToggleButton.querySelector(".theme-label");
+  const themeIcon = themeToggleButton?.querySelector(".theme-icon");
+  const themeLabel = themeToggleButton?.querySelector(".theme-label");
 
   // Activity categories with corresponding colors
   const activityTypes = {
@@ -49,6 +49,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeStorageKey = "themePreference";
 
   function updateThemeToggleButton(theme) {
+    if (!themeToggleButton || !themeIcon || !themeLabel) {
+      return;
+    }
+
     if (theme === "dark") {
       themeIcon.textContent = "☀️";
       themeLabel.textContent = "Light Mode";
@@ -277,7 +281,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Event listeners for authentication
-  themeToggleButton.addEventListener("click", toggleTheme);
+  if (themeToggleButton) {
+    themeToggleButton.addEventListener("click", toggleTheme);
+  }
   loginButton.addEventListener("click", openLoginModal);
   logoutButton.addEventListener("click", logout);
   closeLoginModal.addEventListener("click", closeLoginModalHandler);
