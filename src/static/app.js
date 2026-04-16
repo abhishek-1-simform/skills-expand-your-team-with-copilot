@@ -590,13 +590,53 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    const nativeShareButton = activityCard.querySelector(".share-native");
+    if (nativeShareButton) {
+      nativeShareButton.addEventListener("click", async () => {
+        if (
+          navigator.share &&
+          typeof navigator.share === "function" &&
+          window.isSecureContext
+        ) {
+          try {
+            await navigator.share({
+              title: `${name} | Mergington High School Activities`,
+              text: shareData.text,
+              url: shareData.url,
+            });
+          } catch (error) {
+            if (error && error.name !== "AbortError") {
+              console.error("Web Share failed:", error);
+            }
+          }
+          return;
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          try {
+            await navigator.clipboard.writeText(shareData.url);
+            showMessage("Activity link copied to clipboard.", "success");
+          } catch (error) {
+            console.error("Clipboard write failed:", error);
+            showMessage("Unable to share activity link.", "error");
+          }
+          return;
+        }
+
+        showMessage(
+          "Unable to share automatically. Please copy the link manually.",
+          "error"
+        );
+      });
+    }
+
     activitiesList.appendChild(activityCard);
   }
 
   function buildShareData(name, details, formattedSchedule) {
-    const activityUrl = `${window.location.origin}${
-      window.location.pathname
-    }?activity=${encodeURIComponent(name)}`;
+    const activityUrlObject = new URL(window.location.href);
+    activityUrlObject.searchParams.set("activity", name);
+    const activityUrl = activityUrlObject.toString();
     const shareText = `Check out ${name} at Mergington High School Activities! ${details.description} Schedule: ${formattedSchedule}.`;
 
     return {
@@ -606,9 +646,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function createSocialShareButtons(shareData) {
-    const encodedText = encodeURIComponent(shareData.text);
     const encodedUrl = encodeURIComponent(shareData.url);
-    const xShareUrl = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+    const xShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      `${shareData.text} ${shareData.url}`
+    )}`;
     const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
     const whatsappShareUrl = `https://wa.me/?text=${encodeURIComponent(
       `${shareData.text} ${shareData.url}`
@@ -618,6 +659,12 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="activity-social-share">
         <span class="social-share-label">Share:</span>
         <div class="social-share-buttons">
+          <button
+            type="button"
+            class="social-share-button share-native"
+            aria-label="Share activity"
+            title="Share activity"
+          >↗</button>
           <a
             class="social-share-button share-x"
             href="${xShareUrl}"

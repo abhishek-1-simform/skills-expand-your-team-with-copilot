@@ -297,6 +297,8 @@ section h3 {
   text-decoration: none;
   font-size: 0.7rem;
   font-weight: 700;
+  border: none;
+  cursor: pointer;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
@@ -307,6 +309,10 @@ section h3 {
 
 .share-x {
   background-color: #111;
+}
+
+.share-native {
+  background-color: var(--primary);
 }
 
 .share-facebook {
