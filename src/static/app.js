@@ -24,6 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("login-form");
   const closeLoginModal = document.querySelector(".close-login-modal");
   const loginMessage = document.getElementById("login-message");
+  const themeToggleButton = document.getElementById("theme-toggle-button");
+  const themeIcon = themeToggleButton?.querySelector(".theme-icon");
+  const themeLabel = themeToggleButton?.querySelector(".theme-label");
 
   // Activity categories with corresponding colors
   const activityTypes = {
@@ -43,6 +46,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Authentication state
   let currentUser = null;
+  const themeStorageKey = "themePreference";
+
+  function updateThemeToggleButton(theme) {
+    if (!themeToggleButton || !themeIcon || !themeLabel) {
+      return;
+    }
+
+    if (theme === "dark") {
+      themeIcon.textContent = "☀️";
+      themeLabel.textContent = "Light Mode";
+      themeToggleButton.setAttribute("aria-label", "Switch to light mode");
+      themeToggleButton.setAttribute("aria-pressed", "true");
+    } else {
+      themeIcon.textContent = "🌙";
+      themeLabel.textContent = "Dark Mode";
+      themeToggleButton.setAttribute("aria-label", "Switch to dark mode");
+      themeToggleButton.setAttribute("aria-pressed", "false");
+    }
+  }
+
+  function applyTheme(theme) {
+    document.body.classList.toggle("dark-mode", theme === "dark");
+    updateThemeToggleButton(theme);
+  }
+
+  function initializeTheme() {
+    const savedTheme = localStorage.getItem(themeStorageKey);
+    if (savedTheme === "dark" || savedTheme === "light") {
+      applyTheme(savedTheme);
+      return;
+    }
+
+    const prefersDarkMode = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    applyTheme(prefersDarkMode ? "dark" : "light");
+  }
+
+  function toggleTheme() {
+    const nextTheme = document.body.classList.contains("dark-mode")
+      ? "light"
+      : "dark";
+    applyTheme(nextTheme);
+    localStorage.setItem(themeStorageKey, nextTheme);
+  }
 
   // Time range mappings for the dropdown
   const timeRanges = {
@@ -235,6 +283,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Event listeners for authentication
+  if (themeToggleButton) {
+    themeToggleButton.addEventListener("click", toggleTheme);
+  }
   loginButton.addEventListener("click", openLoginModal);
   logoutButton.addEventListener("click", logout);
   closeLoginModal.addEventListener("click", closeLoginModalHandler);
@@ -862,6 +913,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Initialize app
+  initializeTheme();
   checkAuthentication();
   initializeFilters();
   fetchActivities();
